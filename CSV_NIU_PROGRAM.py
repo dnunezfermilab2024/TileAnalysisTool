@@ -2,18 +2,16 @@ import numpy as np
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-from tkinter import Tk, filedialog, messagebox
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from PIL import Image, ImageTk  
 
 def select_files():
-    root = Tk()
-    root.withdraw()
-    file_paths = []
-    while True:
-        file_path = filedialog.askopenfilename(title="Select a CSV file (Cancel to finish)", filetypes=[("CSV files", "*.csv")])
-        if not file_path:
-            break
-        file_paths.append(file_path)
-    return file_paths
+    global selected_files
+    file_paths = filedialog.askopenfilenames(title="Select CSV files", filetypes=[("CSV files", "*.csv")])
+    if file_paths:
+        selected_files.extend(file_paths)
+        file_label.config(text="Selected Files:\n" + "\n".join([os.path.basename(f) for f in selected_files]))
 
 def extract_tile_dimensions(file_path):
     try:
@@ -36,71 +34,17 @@ def extract_tile_dimensions(file_path):
         messagebox.showerror("Error", f"Error reading {file_path}: {e}")
         return None
 
-def plot_analysis(stats, file_labels):
-    sections = ["Top", "Bottom", "Left", "Right", "Width", "Height"]
-    fig, axes = plt.subplots(3, 2, figsize=(12, 10))
-    axes = axes.flatten()
-    
-    markers = ['o', 's', '^', 'D', 'v', 'P']
-    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
-    
-    for idx, section in enumerate(sections):
-        ax = axes[idx]
-        for file_idx, label in enumerate(file_labels):
-            mean_value, std_dev = stats[section.lower()]
-            
-            # Extract tile type from filename
-            tile_type = label.split('_')[1] if '_' in label else "Unknown"
-            
-            ax.errorbar(
-                file_idx, mean_value, yerr=std_dev,
-                fmt=f'{markers[file_idx % len(markers)]}',
-                color=colors[file_idx % len(colors)],
-                capsize=5, 
-                label=f"{tile_type} ({label})"
-            )
-         
-        ax.set_title(f"{section} Comparison", fontsize=10)
-        ax.set_xticks(range(len(file_labels)))
-        ax.set_xticklabels(file_labels, rotation=30, ha='right', fontsize=8)
-        ax.set_ylabel("Measured - Target [mm]", fontsize=10)
-        ax.axhline(0, color='gray', linestyle='--', linewidth=0.8)
-        ax.axhline(0.6, color='red', linestyle='--', linewidth=1, label='Tolerance Limit')
-        ax.set_ylim(0.0, 0.8) 
-        ax.grid(which='major', linestyle='--', linewidth=0.7, alpha=0.8)
-        ax.grid(which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
-        ax.minorticks_on()
-    
-    plt.tight_layout(rect=[0, 0.05, 1, 0.95])
-    fig.suptitle("Wrapped Tile Comparison", fontsize=14, fontweight='bold')
-    
-    handles, labels = axes[0].get_legend_handles_labels()
-    unique_labels = dict(zip(labels, handles))
-    fig.legend(
-        unique_labels.values(),
-        unique_labels.keys(),
-        loc='upper center',
-        ncol=3,
-        bbox_to_anchor=(0.5, 0.05),
-        fontsize=9
-    )
-    
-    output_path = filedialog.asksaveasfilename(title="Save Plot As", defaultextension=".png", filetypes=[("PNG Files", "*.png")])
-    if output_path:
-        plt.savefig(output_path, dpi=300, bbox_inches='tight', format='png')
-        messagebox.showinfo("Success", f"Plot saved successfully at {output_path}!")
-    plt.show()
+import matplotlib.lines as mlines  
 
-def main():
-    file_paths = select_files()
-    if not file_paths:
-        print("No files selected.")
+def plot_analysis():
+    if not selected_files:
+        messagebox.showwarning("Warning", "Please select files first!")
         return
     
     all_data = {key: [] for key in ["top", "bottom", "left", "right", "width", "height"]}
     file_labels = []
     
-    for file_path in file_paths:
+    for file_path in selected_files:
         data = extract_tile_dimensions(file_path)
         if data:
             for key in all_data:
@@ -109,11 +53,95 @@ def main():
     
     stats = {key: (np.mean(all_data[key]), np.std(all_data[key])) for key in all_data}
     
-    print("Tile Dimension Averages and Standard Deviations:")
-    for key, (mean, std) in stats.items():
-        print(f"{key.capitalize()}: Mean = {mean:.3f}, Std Dev = {std:.3f}")
+    sections = ["Top", "Bottom", "Left", "Right", "Width", "Height"]
+    fig, axes = plt.subplots(3, 2, figsize=(12, 10))
+    axes = axes.flatten()
     
-    plot_analysis(stats, file_labels)
+    markers = ['o', 's', '^', 'D', 'v', 'P']
+    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
     
-if __name__ == "__main__":
-    main()
+    handles = [] 
+    labels = []   
+    
+    for idx, section in enumerate(sections):
+        ax = axes[idx]
+        for file_idx, label in enumerate(file_labels):
+            mean_value, std_dev = stats[section.lower()]
+            handle = ax.errorbar(
+                file_idx, mean_value, yerr=std_dev,
+                fmt=f'{markers[file_idx % len(markers)]}',
+                color=colors[file_idx % len(colors)],
+                capsize=5, 
+                label=label  
+            )
+            if label not in labels:  
+                handles.append(handle)
+                labels.append(label)
+
+        ax.set_title(f"{section} Comparison", fontsize=10)
+        ax.set_xticks(range(len(file_labels)))
+        ax.set_xticklabels(file_labels, rotation=30, ha='right', fontsize=8)
+        ax.set_ylabel("Measured - Target [mm]", fontsize=10)
+        ax.axhline(0, color='gray', linestyle='--', linewidth=0.8, label="Target Line")
+        ax.axhline(0.6, color='red', linestyle='--', linewidth=1)  
+        ax.set_ylim(0.0, 0.8) 
+        ax.grid(which='major', linestyle='--', linewidth=0.7, alpha=0.8)
+        ax.grid(which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
+        ax.minorticks_on()
+    
+    plt.tight_layout(rect=[0, 0.05, 1, 0.92]) 
+    fig.suptitle("Wrapped Tile Comparison", fontsize=14, fontweight='bold')
+
+    
+    tolerance_line = mlines.Line2D([], [], color='red', linestyle='--', linewidth=1, label="Tolerance Limit")
+    handles.append(tolerance_line)
+    labels.append("Tolerance Limit")
+    fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, 0.01), ncol=len(labels), fontsize=10, frameon=True)
+
+    plt.show()
+
+# GUI Setup
+root = tk.Tk()
+root.title("Tile Analysis Tool")
+root.geometry("500x450")
+selected_files = []
+
+try:
+    fnal_img = Image.open(r"C:\Users\danim\Downloads\FNAL-Logo-NAL-Blue-2.png").resize((200, 100))   #copy the address of the picture on your computer
+    niu_img = Image.open(r"C:\Users\danim\Downloads\northern-illinois-university-niu-logo-vector.png").resize((200, 100)) #copy the address of the picture on your computer
+
+    
+    fnal_logo = ImageTk.PhotoImage(fnal_img)
+    niu_logo = ImageTk.PhotoImage(niu_img)
+    
+    logo_frame = tk.Frame(root)
+    logo_frame.pack(pady=5)
+
+    fnal_label = tk.Label(logo_frame, image=fnal_logo)
+    fnal_label.pack(side="left", padx=10)
+    
+    niu_label = tk.Label(logo_frame, image=niu_logo)
+    niu_label.pack(side="right", padx=10)
+except Exception as e:
+    print("Error loading logos:", e)
+
+title_label = tk.Label(root, text="Wrapped Tile Analysis Tool", font=("Arial", 14, "bold"))
+title_label.pack(pady=10)
+
+file_label = tk.Label(root, text="No files selected", wraplength=400, justify="left")
+file_label.pack(pady=10)
+
+button_style = {"height": 2, "width": 20, "font": ("Arial", 12, "bold")}
+
+select_button = tk.Button(root, text="Select Files", command=select_files, bg="blue", fg="white", **button_style)
+select_button.pack(pady=10)  # Increased spacing
+
+generate_button = tk.Button(root, text="Generate Graph", bg="red", fg="white", **button_style)
+generate_button.pack(pady=10)
+
+credit_label = tk.Label(root, text="Created by Danielle Nunez\n(Randolph College, CMS/PURSUE)", font=("Arial", 10, "italic"))
+credit_label.pack(side="bottom", pady=10)
+
+root.mainloop()
+
+
