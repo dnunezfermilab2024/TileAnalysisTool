@@ -11,6 +11,7 @@ Before running the script, ensure you have the following installed:
 - [Python](https://www.python.org/downloads/) (Version 3.x recommended)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - PowerShell (pre-installed on Windows)
+- Git (for cloning repositories)
 - Required Python libraries (install with `pip`)
 
 ## Installation Guide
@@ -44,18 +45,23 @@ Before running the script, ensure you have the following installed:
    - Click **New** and add the path to your Python installation (e.g., `C:\Python39`).
    - Click **OK** and restart PowerShell.
 
-## Running the Project
+## Cloning the Repository
 
-### Step 1: Clone This Repository
-
-1. Open VS Code and open the **Terminal** (Ctrl+\`).
-2. Navigate to a desired directory and run:
+1. Open **VS Code** and open the **Terminal** (Ctrl+`).
+2. Ensure Git is installed by running:
+   ```sh
+   git --version
+   ```
+   If Git is not installed, download and install it from [git-scm.com](https://git-scm.com/).
+3. Navigate to a desired directory and run:
    ```sh
    git clone https://github.com/your-username/repository-name.git
    cd repository-name
    ```
 
-### Step 2: Install Required Python Packages
+## Running the Project
+
+### Step 1: Install Required Python Packages
 
 Run the following command in the terminal:
 
@@ -63,7 +69,7 @@ Run the following command in the terminal:
 pip install numpy pandas matplotlib pillow tk
 ```
 
-### Step 3: Run the Application
+### Step 2: Run the Application
 
 1. Open VS Code and navigate to the project folder.
 2. Open `CSV_NIU_PROGRAM.py`.
@@ -82,6 +88,10 @@ pip install numpy pandas matplotlib pillow tk
 
 Created by **Danielle Nunez**\
 Randolph College, CMS/PURSUE
+
+
+
+
 
 
 
