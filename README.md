@@ -1,78 +1,90 @@
-# TileAnalysisTool
-This script processes CSV files containing tile dimension measurements, extracts relevant data, and visualizes the analysis using Matplotlib.
+# Wrapped Tile Analysis Tool
 
-📌 Prerequisites
+## Overview
+
+This project provides a graphical user interface (GUI) for analyzing wrapped tile dimensions from CSV files. It uses Python with libraries such as `numpy`, `pandas`, `matplotlib`, and `tkinter` to extract data and generate comparative graphs.
+
+## Prerequisites
 
 Before running the script, ensure you have the following installed:
 
-  Python (3.x) (Ensure you check "Add Python to PATH" during installation)
+- [Python](https://www.python.org/downloads/) (Version 3.x recommended)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- PowerShell (pre-installed on Windows)
+- Required Python libraries (install with `pip`)
 
-  Visual Studio Code (VS Code)
+## Installation Guide
 
-  Required Python libraries (see installation steps below)
+### Setting Up Visual Studio Code
 
-📥 Installation and Setup
+1. Visit the [VS Code website](https://code.visualstudio.com/).
+2. Click on **Download for Windows/macOS/Linux** based on your OS.
+3. Run the installer and follow the setup instructions.
+4. Open VS Code after installation.
+5. Install the Python extension:
+   - Open VS Code.
+   - Go to **Extensions** (Ctrl+Shift+X or Cmd+Shift+X on macOS).
+   - Search for **Python** and install the extension provided by Microsoft.
+6. Open a new terminal in VS Code and verify Python installation by running:
+   ```sh
+   python --version
+   ```
 
-1️⃣ Install VS Code
+### Setting Up PowerShell
 
-Download and install VS Code.
+1. Open **PowerShell** (search `PowerShell` in Start Menu on Windows).
+2. Check if Python is installed by running:
+   ```powershell
+   python --version
+   ```
+3. If Python is not recognized, add it to the system's PATH:
+   - Open **System Properties** (Win+R, type `sysdm.cpl`, and press Enter).
+   - Go to the **Advanced** tab and click **Environment Variables**.
+   - Under **System Variables**, find **Path**, select it, and click **Edit**.
+   - Click **New** and add the path to your Python installation (e.g., `C:\Python39`).
+   - Click **OK** and restart PowerShell.
 
-Open VS Code and install the Python extension:
+## Running the Project
 
-    Press Ctrl + Shift + X to open the Extensions Marketplace.
+### Step 1: Clone This Repository
 
-    Search for "Python" and click Install.
+1. Open VS Code and open the **Terminal** (Ctrl+\`).
+2. Navigate to a desired directory and run:
+   ```sh
+   git clone https://github.com/your-username/repository-name.git
+   cd repository-name
+   ```
 
-2️⃣ Install Python and Dependencies
+### Step 2: Install Required Python Packages
 
-Install Python if not already installed.
+Run the following command in the terminal:
 
-Open VS Code and launch the integrated terminal:
+```sh
+pip install numpy pandas matplotlib pillow tk
+```
 
-  Press Ctrl + ~ (tilde key) to open the terminal.
+### Step 3: Run the Application
 
-Run the following command to install the required Python libraries:
+1. Open VS Code and navigate to the project folder.
+2. Open `CSV_NIU_PROGRAM.py`.
+3. Run the script using:
+   ```sh
+   python CSV_NIU_PROGRAM.py
+   ```
 
-  pip install numpy pandas matplotlib tkinter
+## Usage
 
-3️⃣ Clone This Repository (Optional)
+1. Click **Select Files** to choose CSV files for analysis.
+2. Click **Generate Graph** to visualize the results.
+3. The generated plots will display a comparison of tile dimensions.
 
-If you are using Git, you can clone this repository:
+## Credits
 
-git clone https://github.com/your-username/tile-analysis.git
-cd tile-analysis
+Created by **Danielle Nunez**\
+Randolph College, CMS/PURSUE
 
-Alternatively, download and extract the project files manually.
 
-4️⃣ Prepare Your CSV Files
 
-Ensure that your CSV files follow this naming format:
-
-  DATA_<tile_type>_<version>.csv
-
-📌 Example filenames:
-
-  DATA_T34_V2.csv
-
-  DATA_T34_V3.csv
-
-Note: The script extracts the tile type from the filename, so this format is mandatory for correct labeling.
-
-🚀 Running the Script
-
-1. Open VS Code and navigate to the folder containing tile_analysis.py.
-
-2. Open the integrated terminal (Ctrl + ~).
-
-3. Run the script titled:
-
-        CSV_NIU_PROGRAM.py
-
-4. A file selection dialog will appear. Choose one or more CSV files for analysis.
-
-5. The script will process the files and generate a comparison plot.
-
-6. You can save the plot as a PNG file when prompted.
 
 
    
