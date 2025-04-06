@@ -1,100 +1,113 @@
 # Wrapped Tile Analysis Tool
 
-## Overview
+## 📌 Overview  
+This project provides a graphical user interface (GUI) for analyzing wrapped tile dimensions from CSV files.
 
-This project provides a graphical user interface (GUI) for analyzing wrapped tile dimensions from CSV files. It uses Python with libraries such as `numpy`, `pandas`, `matplotlib`, and `tkinter` to extract data and generate comparative graphs.
+## ✅ Prerequisites
 
-## Prerequisites
+Ensure you have the following installed before running the project:
 
-Before running the script, ensure you have the following installed:
-
-- [Python](https://www.python.org/downloads/) (Version 3.x recommended)
-- [Visual Studio Code](https://code.visualstudio.com/)
+- Python (Version 3.x recommended)
+- Visual Studio Code
 - PowerShell (pre-installed on Windows)
 - Git (for cloning repositories)
-- Required Python libraries (install with `pip`)
+- Required Python libraries (install via `pip`)
 
-## Installation Guide
+---
 
-### Setting Up Visual Studio Code
+## 🧰 Visual Studio Code Setup
 
-1. Visit the [VS Code website](https://code.visualstudio.com/).
-2. Click on **Download for Windows/macOS/Linux** based on your OS.
-3. Run the installer and follow the setup instructions.
-4. Open VS Code after installation.
-5. Install the Python extension:
-   - Open VS Code.
-   - Go to **Extensions** (Ctrl+Shift+X or Cmd+Shift+X on macOS).
-   - Search for **Python** and install the extension provided by Microsoft.
-6. Open a new terminal in VS Code and verify Python installation by running:
-   ```sh
+### 1. Installing VS Code
+- Visit the [Visual Studio Code website](https://code.visualstudio.com).
+- Download the installer for your operating system (Windows/macOS/Linux).
+- Run the installer and follow the setup instructions.
+- Open **Visual Studio Code** after installation.
+
+### 2. Installing the Python Extension
+- Launch Visual Studio Code.
+- Open the Extensions view (`Ctrl+Shift+X` or `Cmd+Shift+X` on macOS).
+- Search for **Python** and install the extension by **Microsoft**.
+
+### 3. Verifying Python Installation
+- Open a new terminal in VS Code (`Ctrl+\`` or `Cmd+\``).
+- Run:
+  ```bash
+  python --version
+
+### 💻 PowerShell Setup
+
+### 1. Open PowerShell
+Search for PowerShell in the Start Menu and open it.
+
+### 2. Check Python Installation
+Run:
+   ```bash
    python --version
    ```
+### 3. Add Python to PATH (if needed)
 
-### Setting Up PowerShell
+If Python is not recognized as a command, follow these steps to add it to your system's PATH:
 
-1. Open **PowerShell** (search `PowerShell` in Start Menu on Windows).
-2. Check if Python is installed by running:
-   ```powershell
-   python --version
-   ```
-3. If Python is not recognized, add it to the system's PATH:
-   - Open **System Properties** (Win+R, type `sysdm.cpl`, and press Enter).
-   - Go to the **Advanced** tab and click **Environment Variables**.
-   - Under **System Variables**, find **Path**, select it, and click **Edit**.
-   - Click **New** and add the path to your Python installation (e.g., `C:\Python39`).
-   - Click **OK** and restart PowerShell.
+1. Press `Win + R`, type `sysdm.cpl`, and press **Enter**.
+2. Go to the **Advanced** tab and click **Environment Variables**.
+3. Under **System Variables**, select **Path**, then click **Edit**.
+4. Click **New** and add the path to your Python installation (e.g., `C:\Python39`).
+5. Click **OK** to save the changes.
+6. Restart **PowerShell** for the changes to take effect.
 
-## Cloning the Repository
 
-1. Open **VS Code** and open the **Terminal** (Ctrl+`).
-2. Ensure Git is installed by running:
-   ```sh
-   git --version
-   ```
-   If Git is not installed, download and install it from [git-scm.com](https://git-scm.com/).
-3. Navigate to a desired directory and run:
-   ```sh
-   git clone https://github.com/your-username/repository-name.git
-   cd repository-name
-   ```
+---
 
-## Running the Project
+## 📂 Cloning the Repository
 
-### Step 1: Install Required Python Packages
+You can use either the **VS Code Terminal** or **PowerShell** for this.
 
-Run the following command in the terminal:
+### 1. Verify Git Installation
 
-```sh
+Run:
+```bash
+git --version
+```
+If Git is not installed, download and install it from [git-scm.com](https://git-scm.com).
+
+### 2. Navigate to Your Project Directory
+Use the cd command to move into your desired folder:
+```bash
+cd path\to\your\folder
+```
+
+### 3. Clone the Repository
+Run:
+```bash
+git clone https://github.com/your-username/repository-name.git
+cd repository-name
+```
+
+## ▶️ Running the Project
+### Step 1: Install Required Packages
+In the terminal, run:
+```bash
 pip install numpy pandas matplotlib pillow tk
 ```
 
 ### Step 2: Run the Application
-
-1. Open VS Code and navigate to the project folder.
-2. Open `CSV_NIU_PROGRAM.py`.
-3. Run the script using:
-   ```sh
+   1.Open VS Code and go to the cloned project folder.
+   
+   2.Open the file CSV_NIU_PROGRAM.py.
+   
+   3.In the terminal, run:
+   ```bash
    python CSV_NIU_PROGRAM.py
    ```
 
-## Usage
+## 📊 Usage
+ -Click Select Files to choose one or more CSV files for analysis.
+ 
+ -Click Generate Graph to visualize the results.
+ 
+ -The application will generate plots showing a comparison of tile dimensions.
 
-1. Click **Select Files** to choose CSV files for analysis.
-2. Click **Generate Graph** to visualize the results.
-3. The generated plots will display a comparison of tile dimensions.
+## 👩‍💻 Credits
+**Created by:** Danielle Nunez
 
-## Credits
-
-Created by **Danielle Nunez**\
-Randolph College, CMS/PURSUE
-
-
-
-
-
-
-
-
-
-   
+**Institution:** Randolph College, CMS/PURSUE
