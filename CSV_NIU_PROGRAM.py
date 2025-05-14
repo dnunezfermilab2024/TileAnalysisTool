@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk  
+import itertools
 
 def select_files():
     global selected_files
@@ -16,12 +17,12 @@ def select_files():
 def extract_tile_dimensions(file_path):
     try:
         df = pd.read_csv(file_path, skiprows=11, header=None)
-        
-        if df.shape[1] < 11:
+
+        if df.shape[1] < 11 or df.shape[0] < 13:
             messagebox.showerror("Error", f"Invalid format in {file_path}")
             return None
-        
-        values = {
+
+        means = {
             "top": pd.to_numeric(df.iloc[0, 10], errors='coerce'),
             "bottom": pd.to_numeric(df.iloc[1, 10], errors='coerce'),
             "left": pd.to_numeric(df.iloc[2, 10], errors='coerce'),
@@ -29,7 +30,17 @@ def extract_tile_dimensions(file_path):
             "width": pd.to_numeric(df.iloc[4, 10], errors='coerce'),
             "height": pd.to_numeric(df.iloc[5, 10], errors='coerce')
         }
-        return values
+
+        errors = {
+            "top": pd.to_numeric(df.iloc[6, 10], errors='coerce'),
+            "bottom": pd.to_numeric(df.iloc[7, 10], errors='coerce'),
+            "left": pd.to_numeric(df.iloc[8, 10], errors='coerce'),
+            "right": pd.to_numeric(df.iloc[9, 10], errors='coerce'),
+            "width": pd.to_numeric(df.iloc[10, 10], errors='coerce'),
+            "height": pd.to_numeric(df.iloc[11, 10], errors='coerce')
+        }
+
+        return {"means": means, "errors": errors}
     except Exception as e:
         messagebox.showerror("Error", f"Error reading {file_path}: {e}")
         return None
@@ -41,57 +52,63 @@ def plot_analysis():
         messagebox.showwarning("Warning", "Please select files first!")
         return
     
-    all_data = {key: [] for key in ["top", "bottom", "left", "right", "width", "height"]}
+    all_means = {key: [] for key in ["top", "bottom", "left", "right", "width", "height"]}
+    all_errors = {key: [] for key in ["top", "bottom", "left", "right", "width", "height"]}
+
     file_labels = []
     
     for file_path in selected_files:
         data = extract_tile_dimensions(file_path)
         if data:
-            for key in all_data:
-                all_data[key].append(data[key])
+            for key in all_means:
+                all_means[key].append(data["means"][key])
+                all_errors[key].append(data["errors"][key])
             file_labels.append(os.path.splitext(os.path.basename(file_path))[0])
-    
-    stats = {key: (np.mean(all_data[key]), np.std(all_data[key])) for key in all_data}
     
     sections = ["Top", "Bottom", "Left", "Right", "Width", "Height"]
     fig, axes = plt.subplots(3, 2, figsize=(12, 10))
     axes = axes.flatten()
     
-    markers = ['o', 's', '^', 'D', 'v', 'P']
-    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
+    markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', '<', '>', 'h', '8']
+    colors = list(plt.cm.tab10.colors) + list(plt.cm.Paired.colors)
     
-    handles = [] 
-    labels = []   
     
     for idx, section in enumerate(sections):
         ax = axes[idx]
+        key = section.lower()
+
         for file_idx, label in enumerate(file_labels):
-            mean_value, std_dev = stats[section.lower()]
-            handle = ax.errorbar(
-                file_idx, mean_value, yerr=std_dev,
-                fmt=f'{markers[file_idx % len(markers)]}',
-                color=colors[file_idx % len(colors)],
-                capsize=5, 
-                label=label  
+            mean_val = all_means[key][file_idx]
+            
+            marker = markers[file_idx % len(markers)]
+            color = colors[file_idx % len(colors)]
+
+
+            ax.errorbar(
+                file_idx,
+                mean_val,
+                yerr=0.05,
+                color=color,
+                fmt=marker,
+                capsize=5,
+                label=label if idx == 0 else "" 
             )
-            if label not in labels:  
-                handles.append(handle)
-                labels.append(label)
 
         ax.set_title(f"{section} Comparison", fontsize=10)
         ax.set_xticks(range(len(file_labels)))
         ax.set_xticklabels(file_labels, rotation=30, ha='right', fontsize=8)
         ax.set_ylabel("Measured - Target [mm]", fontsize=10)
-        ax.axhline(0, color='gray', linestyle='--', linewidth=0.8, label="Target Line")
-        ax.axhline(0.6, color='red', linestyle='--', linewidth=1)  
-        ax.set_ylim(0.0, 0.8) 
+        ax.axhline(0, color='gray', linestyle='--', linewidth=0.8)
+        ax.axhline(0.6, color='red', linestyle='--', linewidth=1)
+        ax.set_ylim(0.0, 0.8)
         ax.grid(which='major', linestyle='--', linewidth=0.7, alpha=0.8)
         ax.grid(which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
         ax.minorticks_on()
       
     plt.tight_layout(rect=[0, 0.05, 1, 0.92]) 
     fig.suptitle("Wrapped Tile Comparison", fontsize=14, fontweight='bold')
-
+    
+    handles, labels = axes[0].get_legend_handles_labels()
     tolerance_line = mlines.Line2D([], [], color='red', linestyle='--', linewidth=1, label="Tolerance Limit")
     handles.append(tolerance_line)
     labels.append("Tolerance Limit")
@@ -150,6 +167,9 @@ credit_label = tk.Label(root, text="Created by Danielle Nunez\n(Randolph College
 credit_label.pack(side="bottom", pady=10)
 
 root.mainloop()
+
+
+
 
 
 
